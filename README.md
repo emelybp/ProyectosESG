@@ -1,4 +1,4 @@
-# Sistema de Control de Proyectos — Equipos y Sistemas de Generación
+# Sistema de Control de Proyectos,  Equipos y Sistemas de Generación
 
 Proyecto integrador desarrollado para la materia Taller de Productividad
 Basada en Herramientas Tecnológicas, Universidad TecMilenio.
