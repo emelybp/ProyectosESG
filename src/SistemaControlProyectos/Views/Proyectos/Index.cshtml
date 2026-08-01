@@ -1,0 +1,35 @@
+@model IEnumerable<SistemaControlProyectos.Models.Proyecto>
+
+@{
+    ViewData["Title"] = "Proyectos";
+}
+
+<h1>Proyectos</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo proyecto</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Cliente</th>
+            <th>Tipo de sistema</th>
+            <th>Fecha de inicio</th>
+            <th>Estatus</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var proyecto in Model)
+        {
+            <tr>
+                <td>@proyecto.Nombre</td>
+                <td>@proyecto.Cliente?.RazonSocial</td>
+                <td>@proyecto.TipoSistema</td>
+                <td>@proyecto.FechaInicio.ToShortDateString()</td>
+                <td>@proyecto.Estatus</td>
+            </tr>
+        }
+    </tbody>
+</table>
