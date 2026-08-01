@@ -1,0 +1,29 @@
+name: CI - Build y pruebas
+
+on:
+  push:
+    branches: [ develop, master ]
+  pull_request:
+    branches: [ develop, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar dependencias
+        run: dotnet restore tests/SistemaControlProyectos.Tests/SistemaControlProyectos.Tests.csproj
+
+      - name: Compilar
+        run: dotnet build tests/SistemaControlProyectos.Tests/SistemaControlProyectos.Tests.csproj --no-restore --configuration Release
+
+      - name: Ejecutar pruebas xUnit
+        run: dotnet test tests/SistemaControlProyectos.Tests/SistemaControlProyectos.Tests.csproj --no-build --configuration Release --verbosity normal
