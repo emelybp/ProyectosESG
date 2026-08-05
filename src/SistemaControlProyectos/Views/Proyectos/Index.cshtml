@@ -18,6 +18,7 @@
             <th>Tipo de sistema</th>
             <th>Fecha de inicio</th>
             <th>Estatus</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +30,9 @@
                 <td>@proyecto.TipoSistema</td>
                 <td>@proyecto.FechaInicio.ToShortDateString()</td>
                 <td>@proyecto.Estatus</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@proyecto.Id">Editar</a>
+                </td>
             </tr>
         }
     </tbody>

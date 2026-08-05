@@ -1,0 +1,40 @@
+@model SistemaControlProyectos.Models.ProyectoViewModel
+
+@{
+    ViewData["Title"] = "Editar proyecto";
+}
+
+<h1>Editar proyecto</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ClienteId"></label>
+        <input asp-for="ClienteId" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="TipoSistema"></label>
+        <input asp-for="TipoSistema" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="FechaInicio"></label>
+        <input asp-for="FechaInicio" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="FechaFinEstimada"></label>
+        <input asp-for="FechaFinEstimada" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Estatus"></label>
+        <select asp-for="Estatus" class="form-control"
+                asp-items="Html.GetEnumSelectList<SistemaControlProyectos.Models.EstatusProyecto>()">
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Guardar cambios</button>
+</form>
