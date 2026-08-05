@@ -50,5 +50,36 @@ namespace SistemaControlProyectos.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // RF-02: editar proyecto y cambiar su estatus
+        public async Task<IActionResult> Edit(int id)
+        {
+            var proyecto = await _context.Proyectos.FindAsync(id);
+            if (proyecto == null)
+                return NotFound();
+
+            return View(_service.AProyectoViewModel(proyecto));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ProyectoViewModel vm)
+        {
+            var errores = _service.Validar(vm);
+            foreach (var error in errores)
+                ModelState.AddModelError(string.Empty, error);
+
+            if (!ModelState.IsValid)
+                return View(vm);
+
+            var proyecto = await _context.Proyectos.FindAsync(id);
+            if (proyecto == null)
+                return NotFound();
+
+            _service.ActualizarEntidad(proyecto, vm);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

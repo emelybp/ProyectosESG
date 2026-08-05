@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SistemaControlProyectos.Models;
 
 namespace SistemaControlProyectos.Models
 {
@@ -23,5 +24,8 @@ namespace SistemaControlProyectos.Models
         [Display(Name = "Fecha de fin estimada")]
         [DataType(DataType.Date)]
         public DateTime? FechaFinEstimada { get; set; }
+
+        [Display(Name = "Estatus")]
+        public EstatusProyecto Estatus { get; set; } = EstatusProyecto.EnPropuesta; // RF-02: cambio de estatus
     }
 }

@@ -71,5 +71,55 @@ namespace SistemaControlProyectos.Tests
             Assert.Equal(EstatusProyecto.EnPropuesta, proyecto.Estatus);
             Assert.Equal("Planta solar Torreón", proyecto.Nombre);
         }
+
+        [Fact]
+        public void ActualizarEntidad_ModificaCamposDelProyectoExistente()
+        {
+            var servicio = new ProyectoService();
+            var proyecto = new Proyecto
+            {
+                Id = 5,
+                Nombre = "Nombre viejo",
+                ClienteId = 1,
+                TipoSistema = "Solar",
+                FechaInicio = new DateTime(2026, 1, 1),
+                Estatus = EstatusProyecto.EnPropuesta
+            };
+            var vm = new ProyectoViewModel
+            {
+                Nombre = "Nombre actualizado",
+                ClienteId = 2,
+                TipoSistema = "Cogeneración",
+                FechaInicio = new DateTime(2026, 2, 1),
+                Estatus = EstatusProyecto.EnEjecucion
+            };
+
+            servicio.ActualizarEntidad(proyecto, vm);
+
+            Assert.Equal("Nombre actualizado", proyecto.Nombre);
+            Assert.Equal(EstatusProyecto.EnEjecucion, proyecto.Estatus);
+            Assert.Equal(5, proyecto.Id); // el Id nunca debe cambiar al editar
+        }
+
+        [Fact]
+        public void AProyectoViewModel_MapeaCamposCorrectamente()
+        {
+            var servicio = new ProyectoService();
+            var proyecto = new Proyecto
+            {
+                Id = 7,
+                Nombre = "Biodigestor Norte",
+                ClienteId = 3,
+                TipoSistema = "Biodigestor",
+                FechaInicio = new DateTime(2026, 3, 1),
+                Estatus = EstatusProyecto.Cerrado
+            };
+
+            var vm = servicio.AProyectoViewModel(proyecto);
+
+            Assert.Equal(7, vm.Id);
+            Assert.Equal("Biodigestor Norte", vm.Nombre);
+            Assert.Equal(EstatusProyecto.Cerrado, vm.Estatus);
+        }
     }
 }
