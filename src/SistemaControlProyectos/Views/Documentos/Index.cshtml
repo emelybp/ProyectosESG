@@ -1,0 +1,34 @@
+@model IEnumerable<SistemaControlProyectos.Models.Documento>
+
+@{
+    ViewData["Title"] = "Documentos del proyecto";
+    int proyectoId = ViewBag.ProyectoId;
+}
+
+<h1>Documentos del proyecto</h1>
+
+<p>
+    <a asp-action="Create" asp-route-proyectoId="@proyectoId" class="btn btn-primary">Cargar documento</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Fecha de carga</th>
+            <th>Vigencia</th>
+            <th>Archivo</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var documento in Model)
+        {
+            <tr>
+                <td>@documento.Tipo</td>
+                <td>@documento.FechaCarga.ToShortDateString()</td>
+                <td>@(documento.FechaVigencia?.ToShortDateString() ?? "No aplica")</td>
+                <td><a href="@documento.RutaArchivo" target="_blank">Ver / descargar</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

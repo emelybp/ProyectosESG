@@ -1,0 +1,32 @@
+@model SistemaControlProyectos.Models.DocumentoViewModel
+
+@{
+    ViewData["Title"] = "Cargar documento";
+}
+
+<h1>Cargar documento</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="ProyectoId" />
+
+    <div class="form-group">
+        <label asp-for="Tipo"></label>
+        <select asp-for="Tipo" class="form-control"
+                asp-items="Html.GetEnumSelectList<SistemaControlProyectos.Models.TipoDocumento>()">
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Archivo">Archivo (PDF, imagen, Word o Excel — máx. 10 MB)</label>
+        <input asp-for="Archivo" type="file" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FechaVigencia">Fecha de vigencia (opcional, para permisos y fianzas)</label>
+        <input asp-for="FechaVigencia" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Guardar documento</button>
+</form>
