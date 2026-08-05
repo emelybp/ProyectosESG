@@ -1,0 +1,43 @@
+@model SistemaControlProyectos.Models.CostoIngresoViewModel
+
+@{
+    ViewData["Title"] = Model.Tipo == SistemaControlProyectos.Models.TipoMovimiento.Ingreso
+        ? "Registrar ingreso"
+        : "Registrar costo";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="ProyectoId" />
+    <input type="hidden" asp-for="Tipo" />
+
+    <div class="form-group">
+        <label asp-for="Categoria"></label>
+        <select asp-for="Categoria" class="form-control"
+                asp-items="Html.GetEnumSelectList<SistemaControlProyectos.Models.CategoriaCosto>()">
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Monto"></label>
+        <input asp-for="Monto" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Fecha"></label>
+        <input asp-for="Fecha" class="form-control" />
+    </div>
+
+    @if (Model.Tipo == SistemaControlProyectos.Models.TipoMovimiento.Ingreso)
+    {
+        <div class="form-group">
+            <label asp-for="FolioFiscal"></label>
+            <input asp-for="FolioFiscal" class="form-control" placeholder="Folio del CFDI emitido al cliente" />
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary mt-3">Guardar</button>
+</form>

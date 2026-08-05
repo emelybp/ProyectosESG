@@ -1,0 +1,43 @@
+@model IEnumerable<SistemaControlProyectos.Models.CostoIngreso>
+
+@{
+    ViewData["Title"] = "Costos e ingresos del proyecto";
+    int proyectoId = ViewBag.ProyectoId;
+}
+
+<h1>Costos e ingresos del proyecto</h1>
+
+<p>
+    <a asp-action="Create" asp-route-proyectoId="@proyectoId" asp-route-tipo="Costo" class="btn btn-danger">Registrar costo</a>
+    <a asp-action="Create" asp-route-proyectoId="@proyectoId" asp-route-tipo="Ingreso" class="btn btn-success">Registrar ingreso</a>
+</p>
+
+<div class="alert alert-info">
+    Costo total: @ViewBag.CostoTotal.ToString("C") &nbsp;|&nbsp;
+    Ingreso total: @ViewBag.IngresoTotal.ToString("C") &nbsp;|&nbsp;
+    Margen: @ViewBag.Margen.ToString("C")
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Categoría</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Folio fiscal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var mov in Model)
+        {
+            <tr>
+                <td>@mov.Tipo</td>
+                <td>@mov.Categoria</td>
+                <td>@mov.Monto.ToString("C")</td>
+                <td>@mov.Fecha.ToShortDateString()</td>
+                <td>@(mov.FolioFiscal ?? "—")</td>
+            </tr>
+        }
+    </tbody>
+</table>
