@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SistemaControlProyectos.Authorization;
 using SistemaControlProyectos.Data;
 using SistemaControlProyectos.Models;
 using SistemaControlProyectos.Services;
 
 namespace SistemaControlProyectos.Controllers
 {
+    // RF-12: solo Directivos, Jefes de Departamento e Ingenieros de Proyecto
+    // tienen permiso sobre el módulo "CostosIngresos" (ver PermisoService).
+    [RequiereModulo("CostosIngresos")]
     public class CostosIngresosController : Controller
     {
         private readonly AppDbContext _context;

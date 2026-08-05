@@ -13,6 +13,7 @@ builder.Services.AddScoped<ReporteService>();
 builder.Services.AddScoped<ProyectoService>();
 builder.Services.AddScoped<DocumentoService>();
 builder.Services.AddScoped<CostoIngresoService>();
+builder.Services.AddScoped<PermisoService>();
 
 builder.Services.AddControllersWithViews();
 
