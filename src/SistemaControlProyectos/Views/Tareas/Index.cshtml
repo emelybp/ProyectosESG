@@ -1,0 +1,38 @@
+@model IEnumerable<SistemaControlProyectos.Models.Tarea>
+
+@{
+    ViewData["Title"] = "Plan de trabajo";
+    int proyectoId = ViewBag.ProyectoId;
+}
+
+<h1>Plan de trabajo del proyecto</h1>
+
+<p>
+    <a asp-action="Create" asp-route-proyectoId="@proyectoId" class="btn btn-primary">Nueva tarea</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tarea</th>
+            <th>Responsable</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Hito</th>
+            <th>Estatus</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tarea in Model)
+        {
+            <tr class="@(tarea.EsHito ? "table-warning" : "")">
+                <td>@tarea.Nombre</td>
+                <td>@tarea.Responsable</td>
+                <td>@tarea.FechaInicio.ToShortDateString()</td>
+                <td>@tarea.FechaFin.ToShortDateString()</td>
+                <td>@(tarea.EsHito ? "Sí" : "No")</td>
+                <td>@tarea.Estatus</td>
+            </tr>
+        }
+    </tbody>
+</table>
