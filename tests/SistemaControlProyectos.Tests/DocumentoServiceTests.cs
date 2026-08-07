@@ -1,3 +1,4 @@
+using SistemaControlProyectos.Models;
 using SistemaControlProyectos.Services;
 using Xunit;
 
@@ -55,6 +56,61 @@ namespace SistemaControlProyectos.Tests
 
             Assert.EndsWith("_ficha_tecnica_inversor.pdf", nombreUnico);
             Assert.True(nombreUnico.Length > "ficha_tecnica_inversor.pdf".Length);
+        }
+
+        [Fact]
+        public void EstaVencido_FechaVigenciaPasada_DevuelveTrue()
+        {
+            var servicio = new DocumentoService();
+            var documento = new Documento { FechaVigencia = DateTime.Today.AddDays(-5) };
+
+            Assert.True(servicio.EstaVencido(documento));
+        }
+
+        [Fact]
+        public void EstaVencido_FechaVigenciaFutura_DevuelveFalse()
+        {
+            var servicio = new DocumentoService();
+            var documento = new Documento { FechaVigencia = DateTime.Today.AddDays(90) };
+
+            Assert.False(servicio.EstaVencido(documento));
+        }
+
+        [Fact]
+        public void EstaVencido_SinFechaVigencia_DevuelveFalse()
+        {
+            var servicio = new DocumentoService();
+            var documento = new Documento { FechaVigencia = null }; // ej. una fotografía
+
+            Assert.False(servicio.EstaVencido(documento));
+        }
+
+        [Fact]
+        public void EstaPorVencer_DentroDe30Dias_DevuelveTrue()
+        {
+            var servicio = new DocumentoService();
+            var documento = new Documento { FechaVigencia = DateTime.Today.AddDays(15) };
+
+            Assert.True(servicio.EstaPorVencer(documento));
+        }
+
+        [Fact]
+        public void EstaPorVencer_MasDe30DiasEnElFuturo_DevuelveFalse()
+        {
+            var servicio = new DocumentoService();
+            var documento = new Documento { FechaVigencia = DateTime.Today.AddDays(90) };
+
+            Assert.False(servicio.EstaPorVencer(documento));
+        }
+
+        [Fact]
+        public void EstaPorVencer_DocumentoYaVencido_DevuelveFalse()
+        {
+            // Un documento vencido ya no es "por vencer": es "vencido" (categorías excluyentes)
+            var servicio = new DocumentoService();
+            var documento = new Documento { FechaVigencia = DateTime.Today.AddDays(-1) };
+
+            Assert.False(servicio.EstaPorVencer(documento));
         }
     }
 }

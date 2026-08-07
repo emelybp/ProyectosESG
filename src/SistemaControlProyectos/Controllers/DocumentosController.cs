@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SistemaControlProyectos.Authorization;
 using SistemaControlProyectos.Data;
 using SistemaControlProyectos.Models;
 using SistemaControlProyectos.Services;
 
 namespace SistemaControlProyectos.Controllers
 {
+    // RF-12: módulo "Documentos" disponible para Directivo, Jefe de Departamento e Ingeniero de Proyecto
+    [RequiereModulo("Documentos")]
     public class DocumentosController : Controller
     {
         private readonly AppDbContext _context;
@@ -20,7 +23,7 @@ namespace SistemaControlProyectos.Controllers
             _entorno = entorno;
         }
 
-        // RF-04: consultar los documentos de un proyecto
+        // RF-04: consultar los documentos de un proyecto, con su estatus de vigencia (RE-03)
         public async Task<IActionResult> Index(int proyectoId)
         {
             var documentos = await _context.Documentos
@@ -28,8 +31,17 @@ namespace SistemaControlProyectos.Controllers
                 .OrderByDescending(d => d.FechaCarga)
                 .ToListAsync();
 
+            var modelo = documentos
+                .Select(d => new DocumentoConVigenciaViewModel
+                {
+                    Documento = d,
+                    Vencido = _service.EstaVencido(d),
+                    PorVencer = _service.EstaPorVencer(d)
+                })
+                .ToList();
+
             ViewBag.ProyectoId = proyectoId;
-            return View(documentos);
+            return View(modelo);
         }
 
         // RF-03: cargar documento
