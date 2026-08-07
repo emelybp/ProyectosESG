@@ -15,6 +15,8 @@ builder.Services.AddScoped<DocumentoService>();
 builder.Services.AddScoped<CostoIngresoService>();
 builder.Services.AddScoped<PermisoService>();
 builder.Services.AddScoped<TareaService>();
+builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<AuditoriaService>();
 
 builder.Services.AddControllersWithViews();
 
