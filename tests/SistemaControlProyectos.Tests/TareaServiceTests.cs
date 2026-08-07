@@ -72,5 +72,79 @@ namespace SistemaControlProyectos.Tests
             Assert.Equal(EstatusTarea.Pendiente, tarea.Estatus);
             Assert.Equal("Instalación de paneles", tarea.Nombre);
         }
+
+        [Fact]
+        public void ValidarCambioEstatus_CompletarTareaQueNoHaIniciado_DevuelveError()
+        {
+            var servicio = new TareaService();
+            var tarea = new Tarea
+            {
+                FechaInicio = DateTime.Today.AddDays(10), // inicia en el futuro
+                FechaFin = DateTime.Today.AddDays(20),
+                Estatus = EstatusTarea.Pendiente
+            };
+
+            var errores = servicio.ValidarCambioEstatus(tarea, EstatusTarea.Completada);
+
+            Assert.Contains(errores, e => e.Contains("no ha iniciado"));
+        }
+
+        [Fact]
+        public void ValidarCambioEstatus_CompletarTareaYaIniciada_NoDevuelveErrores()
+        {
+            var servicio = new TareaService();
+            var tarea = new Tarea
+            {
+                FechaInicio = DateTime.Today.AddDays(-5), // ya inició
+                FechaFin = DateTime.Today.AddDays(5),
+                Estatus = EstatusTarea.EnProceso
+            };
+
+            var errores = servicio.ValidarCambioEstatus(tarea, EstatusTarea.Completada);
+
+            Assert.Empty(errores);
+        }
+
+        [Fact]
+        public void EstaVencida_FechaFinPasadaYNoCompletada_DevuelveTrue()
+        {
+            var servicio = new TareaService();
+            var tarea = new Tarea
+            {
+                FechaInicio = new DateTime(2020, 1, 1),
+                FechaFin = new DateTime(2020, 1, 10), // muy en el pasado
+                Estatus = EstatusTarea.EnProceso
+            };
+
+            Assert.True(servicio.EstaVencida(tarea));
+        }
+
+        [Fact]
+        public void EstaVencida_FechaFinPasadaPeroCompletada_DevuelveFalse()
+        {
+            var servicio = new TareaService();
+            var tarea = new Tarea
+            {
+                FechaInicio = new DateTime(2020, 1, 1),
+                FechaFin = new DateTime(2020, 1, 10),
+                Estatus = EstatusTarea.Completada
+            };
+
+            Assert.False(servicio.EstaVencida(tarea));
+        }
+
+        [Fact]
+        public void EstaVencida_FechaFinFutura_DevuelveFalse()
+        {
+            var servicio = new TareaService();
+            var tarea = new Tarea
+            {
+                FechaInicio = DateTime.Today,
+                FechaFin = DateTime.Today.AddDays(30),
+                Estatus = EstatusTarea.Pendiente
+            };
+
+            Assert.False(servicio.EstaVencida(tarea));
+        }
     }
 }

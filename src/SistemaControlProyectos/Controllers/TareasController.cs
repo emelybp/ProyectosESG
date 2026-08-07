@@ -20,7 +20,7 @@ namespace SistemaControlProyectos.Controllers
             _service = service;
         }
 
-        // Plan de trabajo de un proyecto
+        // Plan de trabajo de un proyecto, con indicador de tareas vencidas (RF-08)
         public async Task<IActionResult> Index(int proyectoId)
         {
             var tareas = await _context.Tareas
@@ -28,8 +28,12 @@ namespace SistemaControlProyectos.Controllers
                 .OrderBy(t => t.FechaInicio)
                 .ToListAsync();
 
+            var modelo = tareas
+                .Select(t => new TareaConEstatusViewModel { Tarea = t, Vencida = _service.EstaVencida(t) })
+                .ToList();
+
             ViewBag.ProyectoId = proyectoId;
-            return View(tareas);
+            return View(modelo);
         }
 
         // RF-07: registrar tarea/hito
@@ -54,6 +58,28 @@ namespace SistemaControlProyectos.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index), new { proyectoId = vm.ProyectoId });
+        }
+
+        // RF-08: actualizar el avance (estatus) de una tarea existente
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActualizarEstatus(int id, EstatusTarea nuevoEstatus)
+        {
+            var tarea = await _context.Tareas.FindAsync(id);
+            if (tarea == null)
+                return NotFound();
+
+            var errores = _service.ValidarCambioEstatus(tarea, nuevoEstatus);
+            if (errores.Count > 0)
+            {
+                TempData["ErrorEstatus"] = string.Join(" ", errores);
+                return RedirectToAction(nameof(Index), new { proyectoId = tarea.ProyectoId });
+            }
+
+            _service.ActualizarEstatus(tarea, nuevoEstatus);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), new { proyectoId = tarea.ProyectoId });
         }
     }
 }
