@@ -1,0 +1,43 @@
+@model SistemaControlProyectos.Models.ResultadoAvance
+
+@{
+    ViewData["Title"] = "Reporte de avance";
+}
+
+<h1>Reporte de avance del plan de trabajo</h1>
+
+<div class="alert alert-info">
+    <strong>@Model.PorcentajeAvance%</strong> completado
+    (@Model.Completadas de @Model.Total tareas)
+</div>
+
+<h3>Tareas vencidas</h3>
+
+@if (!Model.Vencidas.Any())
+{
+    <p>No hay tareas vencidas. 🎉</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tarea</th>
+                <th>Responsable</th>
+                <th>Fecha de fin</th>
+                <th>Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tarea in Model.Vencidas)
+            {
+                <tr class="table-danger">
+                    <td>@tarea.Nombre</td>
+                    <td>@tarea.Responsable</td>
+                    <td>@tarea.FechaFin.ToShortDateString()</td>
+                    <td>@tarea.Estatus</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
