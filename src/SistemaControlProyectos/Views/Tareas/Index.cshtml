@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaControlProyectos.Models.Tarea>
+@model IEnumerable<SistemaControlProyectos.Models.TareaConEstatusViewModel>
 
 @{
     ViewData["Title"] = "Plan de trabajo";
@@ -6,6 +6,11 @@
 }
 
 <h1>Plan de trabajo del proyecto</h1>
+
+@if (TempData["ErrorEstatus"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorEstatus"]</div>
+}
 
 <p>
     <a asp-action="Create" asp-route-proyectoId="@proyectoId" class="btn btn-primary">Nueva tarea</a>
@@ -20,18 +25,37 @@
             <th>Fin</th>
             <th>Hito</th>
             <th>Estatus</th>
+            <th>Actualizar</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var tarea in Model)
+        @foreach (var item in Model)
         {
-            <tr class="@(tarea.EsHito ? "table-warning" : "")">
-                <td>@tarea.Nombre</td>
-                <td>@tarea.Responsable</td>
-                <td>@tarea.FechaInicio.ToShortDateString()</td>
-                <td>@tarea.FechaFin.ToShortDateString()</td>
-                <td>@(tarea.EsHito ? "Sí" : "No")</td>
-                <td>@tarea.Estatus</td>
+            <tr class="@(item.Tarea.EsHito ? "table-warning" : "")">
+                <td>@item.Tarea.Nombre</td>
+                <td>@item.Tarea.Responsable</td>
+                <td>@item.Tarea.FechaInicio.ToShortDateString()</td>
+                <td>@item.Tarea.FechaFin.ToShortDateString()</td>
+                <td>@(item.Tarea.EsHito ? "Sí" : "No")</td>
+                <td>
+                    @item.Tarea.Estatus
+                    @if (item.Vencida)
+                    {
+                        <span class="badge bg-danger">Vencida</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="ActualizarEstatus" method="post" class="d-flex">
+                        <input type="hidden" name="id" value="@item.Tarea.Id" />
+                        <select name="nuevoEstatus" class="form-control form-control-sm me-2">
+                            @foreach (var estatus in Enum.GetValues<SistemaControlProyectos.Models.EstatusTarea>())
+                            {
+                                <option value="@estatus" selected="@(estatus == item.Tarea.Estatus)">@estatus</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Actualizar</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>
