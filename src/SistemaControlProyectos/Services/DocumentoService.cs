@@ -2,13 +2,14 @@ using SistemaControlProyectos.Models;
 
 namespace SistemaControlProyectos.Services
 {
-    // Lógica de negocio para la carga de documentos (RF-03, Fase 2 sección 5.1)
+    // Lógica de negocio para la carga y control de documentos (RF-03, RE-03, Fase 2 sección 5.1/5.2)
     public class DocumentoService
     {
         public static readonly string[] ExtensionesPermitidas =
             { ".pdf", ".jpg", ".jpeg", ".png", ".docx", ".xlsx" };
 
         public const long TamanioMaximoBytes = 10 * 1024 * 1024; // 10 MB
+        public const int DiasAnticipacionPorDefecto = 30;
 
         // Validación completa a partir del ViewModel (usada por el controlador)
         public List<string> Validar(DocumentoViewModel vm)
@@ -64,6 +65,22 @@ namespace SistemaControlProyectos.Services
                 FechaCarga = DateTime.Now,
                 FechaVigencia = vm.FechaVigencia
             };
+        }
+
+        // RE-03: un documento sin fecha de vigencia (ej. una foto) nunca se considera vencido
+        public bool EstaVencido(Documento documento)
+        {
+            return documento.FechaVigencia.HasValue
+                && documento.FechaVigencia.Value.Date < DateTime.Today;
+        }
+
+        // RE-03: por vencer = tiene vigencia, no está ya vencido, y vence dentro del rango de aviso
+        public bool EstaPorVencer(Documento documento, int diasAnticipacion = DiasAnticipacionPorDefecto)
+        {
+            if (!documento.FechaVigencia.HasValue || EstaVencido(documento))
+                return false;
+
+            return documento.FechaVigencia.Value.Date <= DateTime.Today.AddDays(diasAnticipacion);
         }
     }
 }

@@ -1,4 +1,4 @@
-@model IEnumerable<SistemaControlProyectos.Models.Documento>
+@model IEnumerable<SistemaControlProyectos.Models.DocumentoConVigenciaViewModel>
 
 @{
     ViewData["Title"] = "Documentos del proyecto";
@@ -21,13 +21,23 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var documento in Model)
+        @foreach (var item in Model)
         {
-            <tr>
-                <td>@documento.Tipo</td>
-                <td>@documento.FechaCarga.ToShortDateString()</td>
-                <td>@(documento.FechaVigencia?.ToShortDateString() ?? "No aplica")</td>
-                <td><a href="@documento.RutaArchivo" target="_blank">Ver / descargar</a></td>
+            <tr class="@(item.Vencido ? "table-danger" : item.PorVencer ? "table-warning" : "")">
+                <td>@item.Documento.Tipo</td>
+                <td>@item.Documento.FechaCarga.ToShortDateString()</td>
+                <td>
+                    @(item.Documento.FechaVigencia?.ToShortDateString() ?? "No aplica")
+                    @if (item.Vencido)
+                    {
+                        <span class="badge bg-danger">Vencido</span>
+                    }
+                    else if (item.PorVencer)
+                    {
+                        <span class="badge bg-warning text-dark">Por vencer</span>
+                    }
+                </td>
+                <td><a href="@item.Documento.RutaArchivo" target="_blank">Ver / descargar</a></td>
             </tr>
         }
     </tbody>
