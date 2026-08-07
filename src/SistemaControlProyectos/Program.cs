@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using SistemaControlProyectos.Data;
 using SistemaControlProyectos.Services;
@@ -7,6 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Base de datos (Fase 2, sección 7 - SQL Server Express)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Autenticación por cookies (RF-11)
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+    });
 
 // Servicios de negocio (uno por módulo, ver Fase 2 sección 4.2)
 builder.Services.AddScoped<ReporteService>();
@@ -37,5 +47,15 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Proyectos}/{action=Index}/{id?}");
+
+// Aplica las migraciones pendientes y carga datos de ejemplo al arrancar.
+// Útil para el servidor de pruebas: no hace falta correr comandos aparte.
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var passwordService = scope.ServiceProvider.GetRequiredService<PasswordService>();
+    await context.Database.MigrateAsync();
+    await DbSeeder.SeedAsync(context, passwordService);
+}
 
 app.Run();

@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SistemaControlProyectos.Authorization;
 using SistemaControlProyectos.Data;
 using SistemaControlProyectos.Models;
 using SistemaControlProyectos.Services;
 
 namespace SistemaControlProyectos.Controllers
 {
+    // RF-12: módulo "Proyectos" disponible para Directivo, Jefe de Departamento e Ingeniero de Proyecto
+    [RequiereModulo("Proyectos")]
     public class ProyectosController : Controller
     {
         private readonly AppDbContext _context;
