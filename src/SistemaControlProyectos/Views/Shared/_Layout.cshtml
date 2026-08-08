@@ -1,3 +1,19 @@
+@using SistemaControlProyectos.Models
+@using SistemaControlProyectos.Services
+@inject PermisoService PermisoServiceInyectado
+
+@{
+    var modulosDisponibles = new HashSet<string>();
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var rolClaim = User.FindFirst("Rol")?.Value;
+        if (rolClaim != null && Enum.TryParse<NombreRol>(rolClaim, out var rolActual))
+        {
+            modulosDisponibles = PermisoServiceInyectado.ModulosDisponiblesPara(rolActual).ToHashSet();
+        }
+    }
+}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,12 +33,24 @@
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Clientes" asp-action="Index">Clientes</a>
-                    </li>
+                    @if (modulosDisponibles.Contains("Proyectos"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
+                        </li>
+                    }
+                    @if (modulosDisponibles.Contains("Clientes"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                        </li>
+                    }
+                    @if (modulosDisponibles.Contains("Administracion"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Administracion" asp-action="Usuarios">Administración</a>
+                        </li>
+                    }
                 </ul>
                 <ul class="navbar-nav">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)

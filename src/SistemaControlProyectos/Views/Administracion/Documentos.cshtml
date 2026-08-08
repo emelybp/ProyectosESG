@@ -1,0 +1,44 @@
+@model IEnumerable<SistemaControlProyectos.Models.Documento>
+
+@{
+    ViewData["Title"] = "Documentos";
+}
+
+<h1>Administración</h1>
+<p>
+    <a asp-action="Usuarios">Usuarios</a> |
+    <a asp-action="Bitacora">Bitácora de auditoría</a> |
+    <a asp-action="Documentos" class="fw-bold">Documentos (todos los proyectos)</a>
+</p>
+
+<h2>Documentos de todos los proyectos</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Proyecto</th>
+            <th>Tipo</th>
+            <th>Fecha de carga</th>
+            <th>Archivo</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var documento in Model)
+        {
+            <tr>
+                <td>@documento.Proyecto?.Nombre</td>
+                <td>@documento.Tipo</td>
+                <td>@documento.FechaCarga.ToShortDateString()</td>
+                <td><a href="@documento.RutaArchivo" target="_blank">Ver / descargar</a></td>
+                <td>
+                    <form asp-action="EliminarDocumento" method="post"
+                          onsubmit="return confirm('¿Eliminar este documento? Esta acción no se puede deshacer.');">
+                        <input type="hidden" name="id" value="@documento.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

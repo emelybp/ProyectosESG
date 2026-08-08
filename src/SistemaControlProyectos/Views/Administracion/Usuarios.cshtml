@@ -1,0 +1,38 @@
+@model IEnumerable<SistemaControlProyectos.Models.Usuario>
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<h1>Administración</h1>
+<p>
+    <a asp-action="Usuarios" class="fw-bold">Usuarios</a> |
+    <a asp-action="Bitacora">Bitácora de auditoría</a> |
+    <a asp-action="Documentos">Documentos (todos los proyectos)</a>
+</p>
+
+<h2>Usuarios</h2>
+
+<p>
+    <a asp-action="CrearUsuario" class="btn btn-primary">Nuevo usuario</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>@usuario.NombreCompleto</td>
+                <td>@usuario.Correo</td>
+                <td>@usuario.Rol?.Nombre</td>
+            </tr>
+        }
+    </tbody>
+</table>

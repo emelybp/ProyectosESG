@@ -16,11 +16,13 @@ namespace SistemaControlProyectos.Controllers
     {
         private readonly AppDbContext _context;
         private readonly PasswordService _passwordService;
+        private readonly AuditoriaService _auditoriaService;
 
-        public AccountController(AppDbContext context, PasswordService passwordService)
+        public AccountController(AppDbContext context, PasswordService passwordService, AuditoriaService auditoriaService)
         {
             _context = context;
             _passwordService = passwordService;
+            _auditoriaService = auditoriaService;
         }
 
         public IActionResult Login()
@@ -51,6 +53,14 @@ namespace SistemaControlProyectos.Controllers
             };
             var identidad = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identidad));
+
+            _context.BitacoraAuditorias.Add(
+                _auditoriaService.RegistrarAccion(usuario.Correo, "Inicio de sesión", "Usuario"));
+            await _context.SaveChangesAsync();
+
+            // El Administrador de TI no opera proyectos: se le manda directo a Administración
+            if (usuario.Rol.Nombre == NombreRol.AdministradorDeTI)
+                return RedirectToAction("Usuarios", "Administracion");
 
             return RedirectToAction("Index", "Proyectos");
         }

@@ -1,0 +1,31 @@
+@model SistemaControlProyectos.Models.UsuarioViewModel
+
+@{
+    ViewData["Title"] = "Nuevo usuario";
+}
+
+<h1>Nuevo usuario</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="CrearUsuario" method="post">
+    <div class="form-group">
+        <label asp-for="NombreCompleto"></label>
+        <input asp-for="NombreCompleto" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Correo"></label>
+        <input asp-for="Correo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Contrasena"></label>
+        <input asp-for="Contrasena" type="password" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="RolId"></label>
+        <select asp-for="RolId" class="form-control" asp-items="ViewBag.Roles">
+            <option value="">-- Selecciona un rol --</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Guardar usuario</button>
+</form>
