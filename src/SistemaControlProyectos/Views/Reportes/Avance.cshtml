@@ -2,7 +2,10 @@
 
 @{
     ViewData["Title"] = "Reporte de avance";
+    int proyectoId = ViewBag.ProyectoId;
 }
+
+<p><a asp-controller="Proyectos" asp-action="Detalle" asp-route-id="@proyectoId">&larr; Volver al proyecto</a></p>
 
 <h1>Reporte de avance del plan de trabajo</h1>
 

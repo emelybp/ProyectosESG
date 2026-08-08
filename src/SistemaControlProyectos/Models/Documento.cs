@@ -9,7 +9,8 @@ namespace SistemaControlProyectos.Models
         OrdenDeCompra,
         Fotografia,
         FichaTecnica,
-        Manual
+        Manual,
+        Cotizacion
     }
 
     public class Documento

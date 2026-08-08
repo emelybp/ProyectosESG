@@ -1,9 +1,16 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using SistemaControlProyectos.Data;
 using SistemaControlProyectos.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Cultura regional: México, para que $ se muestre como pesos (MXN) y no euros
+var culturaMx = new CultureInfo("es-MX");
+CultureInfo.DefaultThreadCurrentCulture = culturaMx;
+CultureInfo.DefaultThreadCurrentUICulture = culturaMx;
 
 // Base de datos (Fase 2, sección 7 - SQL Server Express)
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -32,6 +39,13 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// Aplica la cultura es-MX a cada solicitud (formatos de moneda, fecha, etc.)
+var opcionesLocalizacion = new RequestLocalizationOptions()
+    .SetDefaultCulture("es-MX")
+    .AddSupportedCultures("es-MX")
+    .AddSupportedUICultures("es-MX");
+app.UseRequestLocalization(opcionesLocalizacion);
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -49,7 +63,6 @@ app.MapControllerRoute(
     pattern: "{controller=Proyectos}/{action=Index}/{id?}");
 
 // Aplica las migraciones pendientes y carga datos de ejemplo al arrancar.
-// Útil para el servidor de pruebas: no hace falta correr comandos aparte.
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
