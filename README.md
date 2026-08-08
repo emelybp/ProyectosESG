@@ -341,7 +341,7 @@ demás son visión a más largo plazo, planeados por versión.
 | #21 | Integración con facturación electrónica |
 | #22 | Firma electrónica de documentos |
 | #23 | Reportes financieros avanzados (flujo de caja y rentabilidad) |
-| #NN | CRUD completo (editar y eliminar) en Documentos, Costos/Ingresos y Plan de Trabajo |
+| #29 | CRUD completo (editar y eliminar) en Documentos, Costos/Ingresos y Plan de Trabajo |
 
 Ver todos los issues con la etiqueta [`fuera-de-v1`](https://github.com/emelybp/ProyectosESG/issues?q=is%3Aissue+label%3Afuera-de-v1).
 
