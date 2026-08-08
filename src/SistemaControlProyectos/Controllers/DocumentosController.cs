@@ -23,11 +23,15 @@ namespace SistemaControlProyectos.Controllers
             _entorno = entorno;
         }
 
-        // RF-04: consultar los documentos de un proyecto, con su estatus de vigencia (RE-03)
-        public async Task<IActionResult> Index(int proyectoId)
+        // RF-04: consultar los documentos de un proyecto, con filtro por tipo y vigencia (RE-03)
+        public async Task<IActionResult> Index(int proyectoId, TipoDocumento? tipo = null)
         {
-            var documentos = await _context.Documentos
-                .Where(d => d.ProyectoId == proyectoId)
+            var consulta = _context.Documentos.Where(d => d.ProyectoId == proyectoId);
+
+            if (tipo.HasValue)
+                consulta = consulta.Where(d => d.Tipo == tipo.Value);
+
+            var documentos = await consulta
                 .OrderByDescending(d => d.FechaCarga)
                 .ToListAsync();
 
@@ -41,6 +45,7 @@ namespace SistemaControlProyectos.Controllers
                 .ToList();
 
             ViewBag.ProyectoId = proyectoId;
+            ViewBag.TipoSeleccionado = tipo;
             return View(modelo);
         }
 
