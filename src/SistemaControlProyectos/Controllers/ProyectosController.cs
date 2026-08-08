@@ -14,11 +14,13 @@ namespace SistemaControlProyectos.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ProyectoService _service;
+        private readonly AuditoriaService _auditoriaService;
 
-        public ProyectosController(AppDbContext context, ProyectoService service)
+        public ProyectosController(AppDbContext context, ProyectoService service, AuditoriaService auditoriaService)
         {
             _context = context;
             _service = service;
+            _auditoriaService = auditoriaService;
         }
 
         // RF-10: listado general de proyectos
@@ -67,6 +69,10 @@ namespace SistemaControlProyectos.Controllers
 
             var proyecto = _service.CrearDesdeViewModel(vm);
             _context.Proyectos.Add(proyecto);
+
+            _context.BitacoraAuditorias.Add(
+                _auditoriaService.RegistrarAccion(User.Identity?.Name ?? "Sistema", "Alta", "Proyecto"));
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
@@ -102,6 +108,10 @@ namespace SistemaControlProyectos.Controllers
                 return NotFound();
 
             _service.ActualizarEntidad(proyecto, vm);
+
+            _context.BitacoraAuditorias.Add(
+                _auditoriaService.RegistrarAccion(User.Identity?.Name ?? "Sistema", "Edición", "Proyecto"));
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
