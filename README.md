@@ -329,8 +329,23 @@ rama `feature/…` por cada tarea.
 
 ## Roadmap
 
-Requerimientos que no entran en la versión 1 y quedan planeados para más adelante
-(registrados en el repositorio con la etiqueta `fuera-de-v1`):
+Requerimientos que no entran en la versión 1. Los que ya están registrados como
+issues en el repositorio (etiqueta `fuera-de-v1`) son los más urgentes; los
+demás son visión a más largo plazo, planeados por versión.
+
+### Próximas prioridades (ya registradas como issues)
+
+| Issue | Requerimiento futuro |
+|---|---|
+| #20 | Portal de consulta para clientes externos |
+| #21 | Integración con facturación electrónica |
+| #22 | Firma electrónica de documentos |
+| #23 | Reportes financieros avanzados (flujo de caja y rentabilidad) |
+| #NN | CRUD completo (editar y eliminar) en Documentos, Costos/Ingresos y Plan de Trabajo |
+
+Ver todos los issues con la etiqueta [`fuera-de-v1`](https://github.com/emelybp/ProyectosESG/issues?q=is%3Aissue+label%3Afuera-de-v1).
+
+### Visión a más largo plazo
 
 | Versión | Requerimiento futuro |
 |---|---|
