@@ -1,0 +1,25 @@
+@model List<SistemaControlProyectos.Models.TipoDocumento>
+
+@{
+    ViewData["Title"] = "Documentación faltante";
+    int proyectoId = ViewBag.ProyectoId;
+}
+
+<p><a asp-controller="Proyectos" asp-action="Detalle" asp-route-id="@proyectoId">&larr; Volver al proyecto</a></p>
+
+<h1>Documentación faltante del proyecto</h1>
+
+@if (!Model.Any())
+{
+    <p class="alert alert-success">Este proyecto tiene cargados todos los tipos de documento. ✅</p>
+}
+else
+{
+    <p>Aún faltan por cargar los siguientes tipos de documento:</p>
+    <ul>
+        @foreach (var tipo in Model)
+        {
+            <li>@tipo</li>
+        }
+    </ul>
+}

@@ -1,0 +1,64 @@
+@model IEnumerable<SistemaControlProyectos.Models.TareaConEstatusViewModel>
+
+@{
+    ViewData["Title"] = "Plan de trabajo";
+    int proyectoId = ViewBag.ProyectoId;
+}
+
+<p><a asp-controller="Proyectos" asp-action="Detalle" asp-route-id="@proyectoId">&larr; Volver al proyecto</a></p>
+
+<h1>Plan de trabajo del proyecto</h1>
+
+@if (TempData["ErrorEstatus"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorEstatus"]</div>
+}
+
+<p>
+    <a asp-action="Create" asp-route-proyectoId="@proyectoId" class="btn btn-primary">Nueva tarea</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tarea</th>
+            <th>Responsable</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Hito</th>
+            <th>Estatus</th>
+            <th>Actualizar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="@(item.Tarea.EsHito ? "table-warning" : "")">
+                <td>@item.Tarea.Nombre</td>
+                <td>@item.Tarea.Responsable</td>
+                <td>@item.Tarea.FechaInicio.ToShortDateString()</td>
+                <td>@item.Tarea.FechaFin.ToShortDateString()</td>
+                <td>@(item.Tarea.EsHito ? "Sí" : "No")</td>
+                <td>
+                    @item.Tarea.Estatus
+                    @if (item.Vencida)
+                    {
+                        <span class="badge bg-danger">Vencida</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="ActualizarEstatus" method="post" class="d-flex">
+                        <input type="hidden" name="id" value="@item.Tarea.Id" />
+                        <select name="nuevoEstatus" class="form-control form-control-sm me-2">
+                            @foreach (var estatus in Enum.GetValues<SistemaControlProyectos.Models.EstatusTarea>())
+                            {
+                                <option value="@estatus" selected="@(estatus == item.Tarea.Estatus)">@estatus</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Actualizar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

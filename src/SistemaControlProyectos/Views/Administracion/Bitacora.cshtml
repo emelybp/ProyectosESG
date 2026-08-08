@@ -1,0 +1,43 @@
+@model IEnumerable<SistemaControlProyectos.Models.BitacoraAuditoria>
+
+@{
+    ViewData["Title"] = "Bitácora de auditoría";
+}
+
+<h1>Administración</h1>
+<p>
+    <a asp-action="Usuarios">Usuarios</a> |
+    <a asp-action="Bitacora" class="fw-bold">Bitácora de auditoría</a> |
+    <a asp-action="Documentos">Documentos (todos los proyectos)</a>
+</p>
+
+<h2>Bitácora de auditoría</h2>
+
+@if (!Model.Any())
+{
+    <p>Todavía no hay movimientos registrados.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Entidad</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var registro in Model)
+            {
+                <tr>
+                    <td>@registro.Usuario</td>
+                    <td>@registro.Accion</td>
+                    <td>@registro.Entidad</td>
+                    <td>@registro.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

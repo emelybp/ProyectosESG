@@ -1,0 +1,21 @@
+@model SistemaControlProyectos.Models.ClienteViewModel
+
+@{
+    ViewData["Title"] = "Nuevo cliente";
+}
+
+<h1>Nuevo cliente</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="RazonSocial"></label>
+        <input asp-for="RazonSocial" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Contacto"></label>
+        <input asp-for="Contacto" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Guardar cliente</button>
+</form>

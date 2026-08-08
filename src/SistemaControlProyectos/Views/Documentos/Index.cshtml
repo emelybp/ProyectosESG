@@ -1,0 +1,72 @@
+@model IEnumerable<SistemaControlProyectos.Models.DocumentoConVigenciaViewModel>
+@using SistemaControlProyectos.Models
+
+@{
+    ViewData["Title"] = "Documentos del proyecto";
+    int proyectoId = ViewBag.ProyectoId;
+    TipoDocumento? tipoSeleccionado = ViewBag.TipoSeleccionado;
+}
+
+<p><a asp-controller="Proyectos" asp-action="Detalle" asp-route-id="@proyectoId">&larr; Volver al proyecto</a></p>
+
+<h1>Documentos del proyecto</h1>
+
+<div class="d-flex justify-content-between align-items-end mb-3">
+    <form method="get" class="d-flex align-items-end gap-2">
+        <input type="hidden" name="proyectoId" value="@proyectoId" />
+        <div>
+            <label class="form-label mb-0">Filtrar por tipo</label>
+            <select name="tipo" class="form-control" onchange="this.form.submit()">
+                <option value="">Todos los tipos</option>
+                @foreach (var tipo in Enum.GetValues<TipoDocumento>())
+                {
+                    <option value="@tipo" selected="@(tipoSeleccionado == tipo)">@tipo</option>
+                }
+            </select>
+        </div>
+        <noscript><button type="submit" class="btn btn-outline-secondary">Filtrar</button></noscript>
+    </form>
+
+    <a asp-action="Create" asp-route-proyectoId="@proyectoId" class="btn btn-primary">Cargar documento</a>
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">
+        No hay documentos @(tipoSeleccionado != null ? $"del tipo \"{tipoSeleccionado}\"" : "") cargados todavía.
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Fecha de carga</th>
+                <th>Vigencia</th>
+                <th>Archivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="@(item.Vencido ? "table-danger" : item.PorVencer ? "table-warning" : "")">
+                    <td>@item.Documento.Tipo</td>
+                    <td>@item.Documento.FechaCarga.ToShortDateString()</td>
+                    <td>
+                        @(item.Documento.FechaVigencia?.ToShortDateString() ?? "No aplica")
+                        @if (item.Vencido)
+                        {
+                            <span class="badge bg-danger">Vencido</span>
+                        }
+                        else if (item.PorVencer)
+                        {
+                            <span class="badge bg-warning text-dark">Por vencer</span>
+                        }
+                    </td>
+                    <td><a href="@item.Documento.RutaArchivo" target="_blank">Ver / descargar</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

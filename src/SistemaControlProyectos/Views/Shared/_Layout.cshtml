@@ -1,0 +1,84 @@
+@using SistemaControlProyectos.Models
+@using SistemaControlProyectos.Services
+@inject PermisoService PermisoServiceInyectado
+
+@{
+    var modulosDisponibles = new HashSet<string>();
+    if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var rolClaim = User.FindFirst("Rol")?.Value;
+        if (rolClaim != null && Enum.TryParse<NombreRol>(rolClaim, out var rolActual))
+        {
+            modulosDisponibles = PermisoServiceInyectado.ModulosDisponiblesPara(rolActual).ToHashSet();
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema de Control de Proyectos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Proyectos" asp-action="Index">
+                Equipos y Sistemas de Generación
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav me-auto">
+                    @if (modulosDisponibles.Contains("Proyectos"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
+                        </li>
+                    }
+                    @if (modulosDisponibles.Contains("Clientes"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                        </li>
+                    }
+                    @if (modulosDisponibles.Contains("Administracion"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Administracion" asp-action="Usuarios">Administración</a>
+                        </li>
+                    }
+                </ul>
+                <ul class="navbar-nav">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <span class="nav-link text-white-50">
+                                @User.Identity.Name (@User.FindFirst("Rol")?.Value)
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Logout">Salir</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

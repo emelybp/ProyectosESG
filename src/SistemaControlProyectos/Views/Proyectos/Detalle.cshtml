@@ -1,0 +1,86 @@
+@model SistemaControlProyectos.Models.Proyecto
+@using SistemaControlProyectos.Models
+@using SistemaControlProyectos.Services
+@inject PermisoService PermisoServiceInyectado
+
+@{
+    ViewData["Title"] = Model.Nombre;
+
+    var modulosDisponibles = new HashSet<string>();
+    var rolClaim = User.FindFirst("Rol")?.Value;
+    if (rolClaim != null && Enum.TryParse<NombreRol>(rolClaim, out var rolActual))
+    {
+        modulosDisponibles = PermisoServiceInyectado.ModulosDisponiblesPara(rolActual).ToHashSet();
+    }
+}
+
+<h1>@Model.Nombre</h1>
+
+<dl class="row">
+    <dt class="col-sm-2">Cliente</dt>
+    <dd class="col-sm-10">@Model.Cliente?.RazonSocial</dd>
+
+    <dt class="col-sm-2">Tipo de sistema</dt>
+    <dd class="col-sm-10">@Model.TipoSistema</dd>
+
+    <dt class="col-sm-2">Fecha de inicio</dt>
+    <dd class="col-sm-10">@Model.FechaInicio.ToShortDateString()</dd>
+
+    <dt class="col-sm-2">Fecha de fin estimada</dt>
+    <dd class="col-sm-10">@(Model.FechaFinEstimada?.ToShortDateString() ?? "No definida")</dd>
+
+    <dt class="col-sm-2">Estatus</dt>
+    <dd class="col-sm-10">
+        <span class="badge bg-secondary">@Model.Estatus</span>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="ms-2">Editar</a>
+    </dd>
+</dl>
+
+<hr />
+
+<h2>Módulos del proyecto</h2>
+
+<div class="row g-3">
+    @if (modulosDisponibles.Contains("Documentos"))
+    {
+        <div class="col-md-3">
+            <a asp-controller="Documentos" asp-action="Index" asp-route-proyectoId="@Model.Id"
+               class="btn btn-outline-primary w-100 py-3">📄 Documentos</a>
+        </div>
+    }
+    @if (modulosDisponibles.Contains("CostosIngresos"))
+    {
+        <div class="col-md-3">
+            <a asp-controller="CostosIngresos" asp-action="Index" asp-route-proyectoId="@Model.Id"
+               class="btn btn-outline-success w-100 py-3">💲 Costos e ingresos</a>
+        </div>
+    }
+    @if (modulosDisponibles.Contains("PlanTrabajo"))
+    {
+        <div class="col-md-3">
+            <a asp-controller="Tareas" asp-action="Index" asp-route-proyectoId="@Model.Id"
+               class="btn btn-outline-warning w-100 py-3">✅ Plan de trabajo</a>
+        </div>
+    }
+    @if (modulosDisponibles.Contains("Reportes"))
+    {
+        <div class="col-md-3">
+            <div class="btn-group-vertical w-100">
+                <a asp-controller="Reportes" asp-action="Avance" asp-route-proyectoId="@Model.Id"
+                   class="btn btn-outline-info mb-1">📊 Reporte de avance</a>
+                <a asp-controller="Reportes" asp-action="DocumentacionFaltante" asp-route-proyectoId="@Model.Id"
+                   class="btn btn-outline-info">📋 Documentación faltante</a>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!modulosDisponibles.Contains("Documentos") && !modulosDisponibles.Contains("CostosIngresos")
+    && !modulosDisponibles.Contains("PlanTrabajo") && !modulosDisponibles.Contains("Reportes"))
+{
+    <p class="text-muted">Tu rol no tiene módulos adicionales disponibles para este proyecto.</p>
+}
+
+<p class="mt-4">
+    <a asp-action="Index">&larr; Volver al listado de proyectos</a>
+</p>
