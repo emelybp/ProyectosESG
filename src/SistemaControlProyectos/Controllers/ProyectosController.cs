@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaControlProyectos.Authorization;
 using SistemaControlProyectos.Data;
@@ -30,9 +31,23 @@ namespace SistemaControlProyectos.Controllers
             return View(proyectos);
         }
 
-        // RF-01: registrar proyecto
-        public IActionResult Create()
+        // Pantalla de detalle: punto de entrada a los módulos de un proyecto (Fase 2, IU-02)
+        public async Task<IActionResult> Detalle(int id)
         {
+            var proyecto = await _context.Proyectos
+                .Include(p => p.Cliente)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (proyecto == null)
+                return NotFound();
+
+            return View(proyecto);
+        }
+
+        // RF-01: registrar proyecto
+        public async Task<IActionResult> Create()
+        {
+            await CargarClientesEnViewBag();
             return View(new ProyectoViewModel());
         }
 
@@ -45,7 +60,10 @@ namespace SistemaControlProyectos.Controllers
                 ModelState.AddModelError(string.Empty, error);
 
             if (!ModelState.IsValid)
+            {
+                await CargarClientesEnViewBag(vm.ClienteId);
                 return View(vm);
+            }
 
             var proyecto = _service.CrearDesdeViewModel(vm);
             _context.Proyectos.Add(proyecto);
@@ -61,6 +79,7 @@ namespace SistemaControlProyectos.Controllers
             if (proyecto == null)
                 return NotFound();
 
+            await CargarClientesEnViewBag(proyecto.ClienteId);
             return View(_service.AProyectoViewModel(proyecto));
         }
 
@@ -73,7 +92,10 @@ namespace SistemaControlProyectos.Controllers
                 ModelState.AddModelError(string.Empty, error);
 
             if (!ModelState.IsValid)
+            {
+                await CargarClientesEnViewBag(vm.ClienteId);
                 return View(vm);
+            }
 
             var proyecto = await _context.Proyectos.FindAsync(id);
             if (proyecto == null)
@@ -83,6 +105,12 @@ namespace SistemaControlProyectos.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task CargarClientesEnViewBag(int? clienteSeleccionado = null)
+        {
+            var clientes = await _context.Clientes.OrderBy(c => c.RazonSocial).ToListAsync();
+            ViewBag.Clientes = new SelectList(clientes, "Id", "RazonSocial", clienteSeleccionado);
         }
     }
 }
