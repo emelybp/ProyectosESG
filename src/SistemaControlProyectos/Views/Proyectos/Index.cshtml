@@ -10,7 +10,7 @@
     <a asp-action="Create" class="btn btn-primary">Nuevo proyecto</a>
 </p>
 
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th>Nombre</th>
@@ -18,21 +18,17 @@
             <th>Tipo de sistema</th>
             <th>Fecha de inicio</th>
             <th>Estatus</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var proyecto in Model)
         {
-            <tr>
-                <td>@proyecto.Nombre</td>
+            <tr style="cursor:pointer" onclick="location.href='@Url.Action("Detalle", new { id = proyecto.Id })'">
+                <td><a asp-action="Detalle" asp-route-id="@proyecto.Id">@proyecto.Nombre</a></td>
                 <td>@proyecto.Cliente?.RazonSocial</td>
                 <td>@proyecto.TipoSistema</td>
                 <td>@proyecto.FechaInicio.ToShortDateString()</td>
                 <td>@proyecto.Estatus</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@proyecto.Id">Editar</a>
-                </td>
             </tr>
         }
     </tbody>
